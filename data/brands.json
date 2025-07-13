@@ -10,5 +10,11 @@
     "name": "Bud Lightyear",
     "logoUrl": "https://www.anheuser-busch.com/content/dam/ab/brand-logos/bud-light.png",
     "description": "To infinity and refreshing! A light lager for those who boldly go where no beer has gone before."
+  },
+  {
+    "id": 1752384011289,
+    "name": "Kona Tsunami",
+    "logoUrl": "https://cdn.builder.io/api/v1/image/assets%2F0e651898bba9404faf7390e31f349b0b%2F70545aab6fa744918eda1b187ff77c1c?format=webp&width=2000",
+    "description": "Just run for it"
   }
 ]
