@@ -26,6 +26,7 @@ on:
         type: choice
         options:
           - create
+          - edit
           - delete
 
 jobs:
@@ -71,28 +72,48 @@ jobs:
           const id = Number(process.env.INPUT_ID);
           const index = data.findIndex(b => b.id === id);
 
+          let newBrand;
           switch (process.env.INPUT_OPERATION) {
 
             case 'create':
+               newBrand = {
+                 id,
+                 name: process.env.INPUT_NAME,
+                 logoUrl: process.env.INPUT_LOGOURL,
+                 description: process.env.INPUT_DESCRIPTION,
+               };
 
-              const newBrand = {
-                id,
-                name: process.env.INPUT_NAME,
-                logoUrl: process.env.INPUT_LOGOURL,
-                description: process.env.INPUT_DESCRIPTION,
-              };
+               if (index >= 0) {
+                 data[index] = newBrand;
+                 console.log('Updated brand with id', id);
+               } else {
+                 data.push(newBrand);
+                 console.log('Created brand with id', id);
+               }
 
-              if (index >= 0) {
-                data[index] = newBrand;
-                console.log('Updated brand with id', id);
-              } else {
-                data.push(newBrand);
-                console.log('Created brand with id', id);
-              }
+               require('fs').writeFileSync('data/brands.json', JSON.stringify(data, null, 2));
 
-              require('fs').writeFileSync('data/brands.json', JSON.stringify(data, null, 2));
+               break;
 
-              break;
+            case 'edit':
+               newBrand = {
+                 id,
+                 name: process.env.INPUT_NAME,
+                 logoUrl: process.env.INPUT_LOGOURL,
+                 description: process.env.INPUT_DESCRIPTION,
+               };
+
+               if (index >= 0) {
+                 data[index] = newBrand;
+                 console.log('Updated brand with id', id);
+               } else {
+                 console.error('Brand with id', id, 'not found for edit.');
+                 process.exit(1);
+               }
+
+               require('fs').writeFileSync('data/brands.json', JSON.stringify(data, null, 2));
+
+               break;
 
             case 'delete':
 

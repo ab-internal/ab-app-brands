@@ -99,14 +99,36 @@ export default function BrandManager() {
     }
 
     if (editingId !== null) {
+      setLoading(true);
+      setError("");
+      try {
+        const response = await fetch("/api/brand-dispatch", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            id: editingId,
+            name: form.name,
+            logoUrl: form.logoUrl,
+            description: form.description,
+            operation: "edit"
+          }),
+        });
 
-      setBrands((prev) =>
-        prev.map((b) => (b.id === editingId ? { ...b, ...form } : b))
-      );
-      resetForm();
-
+        if (!response.ok) {
+          const err = await response.json();
+          throw new Error(`API error: ${response.status} ${JSON.stringify(err)}`);
+        }
+        await fetchBrandsJSON().then(setBrands);
+        resetForm();
+      } catch (err: unknown) {
+        setError("Failed to persist brand edit to GitHub. See console for details.");
+        console.error("API error:", err);
+      } finally {
+        setLoading(false);
+      }
     } else {
-
       setLoading(true);
       setError("");
       const newBrand = { ...form, id: Date.now() };
@@ -131,7 +153,7 @@ export default function BrandManager() {
         }
         await fetchBrands();
         resetForm();
-        
+
       } catch (err: unknown) {
         setError("Failed to persist brand to GitHub. See console for details.");
         console.error("API error:", err);
@@ -203,8 +225,7 @@ export default function BrandManager() {
       >
         <h2 className="text-lg font-semibold mb-2">{editingId ? "Edit Brand" : "Add Brand"}</h2>
         <label className="flex flex-col gap-1">
-          Name
-          <input
+          Name <input
             name="name"
             type="text"
             value={form.name}
@@ -215,8 +236,7 @@ export default function BrandManager() {
           />
         </label>
         <label className="flex flex-col gap-1">
-          Logo URL
-          <input
+          Logo URL <input
             name="logoUrl"
             type="url"
             value={form.logoUrl}
@@ -228,8 +248,7 @@ export default function BrandManager() {
           />
         </label>
         <label className="flex flex-col gap-1">
-          Description
-          <textarea
+          Description <textarea
             name="description"
             value={form.description}
             onChange={handleChange}
