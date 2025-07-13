@@ -53,7 +53,7 @@ export default function BrandManager() {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.name.trim()) {
       setError("Name is required.");
@@ -71,13 +71,37 @@ export default function BrandManager() {
       setBrands((prev) =>
         prev.map((b) => (b.id === editingId ? { ...b, ...form } : b))
       );
+      resetForm();
     } else {
-      setBrands((prev) => [
-        ...prev,
-        { ...form, id: Date.now() },
-      ]);
+      setLoading(true);
+      setError("");
+      const newBrand = { ...form, id: Date.now() };
+      try {
+        const res = await fetch("/api/brand-dispatch", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            id: newBrand.id,
+            name: newBrand.name,
+            logoUrl: newBrand.logoUrl,
+            description: newBrand.description,
+          }),
+        });
+        if (!res.ok) {
+          const err = await res.json();
+          throw new Error(`API error: ${res.status} ${JSON.stringify(err)}`);
+        }
+        setBrands((prev) => [...prev, newBrand]);
+        resetForm();
+      } catch (err: any) {
+        setError("Failed to persist brand to GitHub. See console for details.");
+        console.error("API error:", err);
+      } finally {
+        setLoading(false);
+      }
     }
-    resetForm();
   };
 
   const handleEdit = (id: number) => {
