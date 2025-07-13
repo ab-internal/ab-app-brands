@@ -32,3 +32,9 @@ export async function POST(req: NextRequest) {
 
   return NextResponse.json({ success: true });
 }
+
+export async function GET() {
+  const githubTokenLength = process.env.GITHUB_TOKEN?.length ?? 0;
+  return NextResponse.json({ githubTokenLength });
+}
+

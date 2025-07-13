@@ -30,6 +30,7 @@ jobs:
 
           export NEXT_BASE_PATH=/$REPO_NAME
           export NEXT_ASSET_PREFIX=/$REPO_NAME/
+          export NEXT_STATIC_OUTPUT=true
 
           npm run build
 

@@ -16,7 +16,7 @@ const nextConfig: NextConfig = {
   images      : {
     unoptimized: true,
   },
-  output      : "export",
+  output      : process.env.NEXT_STATIC_OUTPUT === "true" ? "export" : "standalone",
 };
 
 export default nextConfig;
