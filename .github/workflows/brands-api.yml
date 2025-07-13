@@ -68,13 +68,12 @@ jobs:
           const path = 'brands.json.bak';
           const data = JSON.parse(fs.readFileSync(path, 'utf8'));
 
+          const id = Number(process.env.INPUT_ID);
+          const index = data.findIndex(b => b.id === id);
+
           switch (process.env.INPUT_OPERATION) {
 
             case 'create':
-
-              const id = Number(process.env.INPUT_ID);
-              const data = JSON.parse(require('fs').readFileSync('brands.json.bak', 'utf8'));
-              const index = data.findIndex(b => b.id === id);
 
               const newBrand = {
                 id,
@@ -96,10 +95,6 @@ jobs:
               break;
 
             case 'delete':
-
-              const id    = Number(process.env.INPUT_ID);
-              const data  = JSON.parse(require('fs').readFileSync('brands.json.bak', 'utf8'));
-              const index = data.findIndex(b => b.id === id);
 
               if (index === -1) {
                 console.error('Brand with id', id, 'not found.');
