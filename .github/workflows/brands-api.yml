@@ -54,57 +54,74 @@ jobs:
 
       - name: Update brands.json
         id: update_json
-        run: |
-          node <<'EOF'
-
-          const fs = require('fs');
-          const path = 'brands.json.bak';
-          const data = JSON.parse(fs.readFileSync(path, 'utf8'));
-          const operation = process.env.INPUT_OPERATION || 'create';
-
-          const id = Number(process.env.INPUT_ID);
-
-          if (operation === 'delete') {
-
-            const idx = data.findIndex(b => b.id === id);
-
-            if (idx === -1) {
-              console.error('Brand with id', id, 'not found.');
-              process.exit(1);
-            }
-
-            data.splice(idx, 1);
-
-            console.log('Deleted brand with id', id);
-          } else {
-
-            const newBrand = {
-              id,
-              name: process.env.INPUT_NAME,
-              logoUrl: process.env.INPUT_LOGOURL,
-              description: process.env.INPUT_DESCRIPTION,
-            };
-
-            // Replace if id exists, else add
-            const idx = data.findIndex(b => b.id === newBrand.id);
-
-            if (idx >= 0) {
-              data[idx] = newBrand;
-            } else {
-              data.push(newBrand);
-            }
-
-            console.log('Created/updated brand with id', id);
-          }
-
-          fs.writeFileSync('data/brands.json', JSON.stringify(data, null, 2));
-          EOF
         env:
           INPUT_ID: ${{ github.event.inputs.id }}
           INPUT_NAME: ${{ github.event.inputs.name }}
           INPUT_LOGOURL: ${{ github.event.inputs.logoUrl }}
           INPUT_DESCRIPTION: ${{ github.event.inputs.description }}
           INPUT_OPERATION: ${{ github.event.inputs.operation }}
+        
+        run: |
+          node <<'EOF'
+
+          const fs = require('fs');
+          const path = 'brands.json.bak';
+          const data = JSON.parse(fs.readFileSync(path, 'utf8'));
+
+          switch (process.env.INPUT_OPERATION) {
+
+            case 'create':
+
+              const id = Number(process.env.INPUT_ID);
+              const data = JSON.parse(require('fs').readFileSync('brands.json.bak', 'utf8'));
+              const index = data.findIndex(b => b.id === id);
+
+              const newBrand = {
+                id,
+                name: process.env.INPUT_NAME,
+                logoUrl: process.env.INPUT_LOGOURL,
+                description: process.env.INPUT_DESCRIPTION,
+              };
+
+              if (index >= 0) {
+                data[index] = newBrand;
+                console.log('Updated brand with id', id);
+              } else {
+                data.push(newBrand);
+                console.log('Created brand with id', id);
+              }
+
+              require('fs').writeFileSync('data/brands.json', JSON.stringify(data, null, 2));
+
+              break;
+
+            case 'delete':
+
+              const id    = Number(process.env.INPUT_ID);
+              const data  = JSON.parse(require('fs').readFileSync('brands.json.bak', 'utf8'));
+              const index = data.findIndex(b => b.id === id);
+
+              if (index === -1) {
+                console.error('Brand with id', id, 'not found.');
+                process.exit(1);
+              }
+
+              data.splice(index, 1);
+              console.log('Deleted brand with id', id);
+
+              require('fs').writeFileSync('data/brands.json', JSON.stringify(data, null, 2));
+
+              break;
+
+            default:
+
+              console.error(`Unsupported or missing operation: '${process.env.INPUT_OPERATION}'.`);
+              process.exit(1);
+
+          }
+
+          fs.writeFileSync('data/brands.json', JSON.stringify(data, null, 2));
+          EOF
 
       - name: Commit and push changes
         run: |
