@@ -9,6 +9,19 @@ interface Brand {
 }
 
 export default function BrandManager() {
+  React.useEffect(() => {
+    fetch("https://raw.githubusercontent.com/ab-internal/ab-app-brands/refs/heads/develop/data/brands.json")
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to fetch brands.json");
+        return res.json();
+      })
+      .then((data) => {
+        if (Array.isArray(data)) setBrands(data);
+      })
+      .catch((err) => {
+        console.error("Error loading brands.json:", err);
+      });
+  }, []);
   const [brands, setBrands] = useState<Brand[]>([]);
   const [form, setForm] = useState<Omit<Brand, "id">>({
     name: "",
