@@ -1,0 +1,195 @@
+"use client";
+import React, { useState } from "react";
+
+interface Brand {
+  id: number;
+  name: string;
+  logoUrl: string;
+  description: string;
+}
+
+export default function BrandManager() {
+  const [brands, setBrands] = useState<Brand[]>([]);
+  const [form, setForm] = useState<Omit<Brand, "id">>({
+    name: "",
+    logoUrl: "",
+    description: "",
+  });
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [error, setError] = useState<string>("");
+
+  const resetForm = () => {
+    setForm({ name: "", logoUrl: "", description: "" });
+    setEditingId(null);
+    setError("");
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const validateUrl = (url: string) => {
+    try {
+      new URL(url);
+      return true;
+    } catch {
+      return false;
+    }
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!form.name.trim()) {
+      setError("Name is required.");
+      return;
+    }
+    if (!form.logoUrl.trim() || !validateUrl(form.logoUrl)) {
+      setError("Valid Logo URL is required.");
+      return;
+    }
+    if (!form.description.trim()) {
+      setError("Description is required.");
+      return;
+    }
+    if (editingId !== null) {
+      setBrands((prev) =>
+        prev.map((b) => (b.id === editingId ? { ...b, ...form } : b))
+      );
+    } else {
+      setBrands((prev) => [
+        ...prev,
+        { ...form, id: Date.now() },
+      ]);
+    }
+    resetForm();
+  };
+
+  const handleEdit = (id: number) => {
+    const brand = brands.find((b) => b.id === id);
+    if (brand) {
+      setForm({ name: brand.name, logoUrl: brand.logoUrl, description: brand.description });
+      setEditingId(id);
+      setError("");
+    }
+  };
+
+  const handleDelete = (id: number) => {
+    setBrands((prev) => prev.filter((b) => b.id !== id));
+    if (editingId === id) resetForm();
+  };
+
+  return (
+    <div className="flex w-full max-w-5xl mx-auto gap-8">
+      {/* Form */}
+      <form
+        className="flex flex-col gap-4 w-full max-w-xs bg-white dark:bg-gray-800 shadow p-6 rounded"
+        onSubmit={handleSubmit}
+      >
+        <h2 className="text-lg font-semibold mb-2">{editingId ? "Edit Brand" : "Add Brand"}</h2>
+        <label className="flex flex-col gap-1">
+          Name
+          <input
+            name="name"
+            type="text"
+            value={form.name}
+            onChange={handleChange}
+            required
+            className="border px-2 py-1 rounded"
+            placeholder="Brand Name"
+          />
+        </label>
+        <label className="flex flex-col gap-1">
+          Logo URL
+          <input
+            name="logoUrl"
+            type="url"
+            value={form.logoUrl}
+            onChange={handleChange}
+            required
+            pattern="https?://.+"
+            className="border px-2 py-1 rounded"
+            placeholder="https://example.com/logo.png"
+          />
+        </label>
+        <label className="flex flex-col gap-1">
+          Description
+          <textarea
+            name="description"
+            value={form.description}
+            onChange={handleChange}
+            required
+            className="border px-2 py-1 rounded min-h-[60px]"
+            placeholder="Brand Description"
+          />
+        </label>
+        {error && <div className="text-red-600 text-sm">{error}</div>}
+        <div className="flex gap-2 mt-2">
+          <button
+            type="submit"
+            className="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700"
+          >
+            {editingId ? "Update" : "Add"}
+          </button>
+          {editingId !== null && (
+            <button
+              type="button"
+              onClick={resetForm}
+              className="bg-gray-400 text-white px-4 py-1 rounded hover:bg-gray-500"
+            >
+              Cancel
+            </button>
+          )}
+        </div>
+      </form>
+      {/* Table */}
+      <div className="flex-1 overflow-x-auto">
+        <table className="min-w-full bg-white dark:bg-gray-900 shadow rounded">
+          <thead>
+            <tr>
+              <th className="p-2 border-b">Logo</th>
+              <th className="p-2 border-b">Name</th>
+              <th className="p-2 border-b">Description</th>
+              <th className="p-2 border-b">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {brands.length === 0 ? (
+              <tr>
+                <td colSpan={4} className="text-center p-4 text-gray-500">
+                  No brands yet.
+                </td>
+              </tr>
+            ) : (
+              brands.map((brand) => (
+                <tr key={brand.id}>
+                  <td className="p-2 border-b">
+                    <img src={brand.logoUrl} alt={brand.name} className="h-8 w-8 object-contain" />
+                  </td>
+                  <td className="p-2 border-b font-semibold">{brand.name}</td>
+                  <td className="p-2 border-b">{brand.description}</td>
+                  <td className="p-2 border-b flex gap-2">
+                    <button
+                      type="button"
+                      onClick={() => handleEdit(brand.id)}
+                      className="bg-yellow-500 text-white px-2 py-1 rounded hover:bg-yellow-600"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleDelete(brand.id)}
+                      className="bg-red-600 text-white px-2 py-1 rounded hover:bg-red-700"
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
