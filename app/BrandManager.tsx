@@ -12,7 +12,7 @@ interface Brand {
 export default function BrandManager() {
   const [loading, setLoading] = React.useState(true);
   React.useEffect(() => {
-    fetch("https://raw.githubusercontent.com/ab-internal/ab-app-brands/develop/data/brands.json", 
+    fetch("https://raw.githubusercontent.com/ab-internal/ab-app-brands/develop/data/brands.json?ts=" + Date.now(), 
       {
         cache: "no-store"
       }
