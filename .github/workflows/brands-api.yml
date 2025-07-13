@@ -1,0 +1,83 @@
+name: Brands API
+
+on:
+  workflow_dispatch:
+    inputs:
+      id:
+        description: 'Brand ID (number)'
+        required: true
+        type: number
+      name:
+        description: 'Brand Name'
+        required: true
+        type: string
+      logoUrl:
+        description: 'Logo URL'
+        required: true
+        type: string
+      description:
+        description: 'Brand Description'
+        required: true
+        type: string
+
+jobs:
+  update-brands-json:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Ensure data directory exists
+        run: mkdir -p data
+
+      - name: Read existing brands.json or create new
+        id: read_json
+        run: |
+          if [ -f data/brands.json ]; then
+            cat data/brands.json > brands.json.bak
+          else
+            echo '[]' > brands.json.bak
+          fi
+
+      - name: Update brands.json
+        id: update_json
+        run: |
+          node <<'EOF'
+          const fs = require('fs');
+          const path = 'brands.json.bak';
+          const data = JSON.parse(fs.readFileSync(path, 'utf8'));
+          const newBrand = {
+            id: Number(process.env.INPUT_ID),
+            name: process.env.INPUT_NAME,
+            logoUrl: process.env.INPUT_LOGOURL,
+            description: process.env.INPUT_DESCRIPTION,
+          };
+          // Replace if id exists, else add
+          const idx = data.findIndex(b => b.id === newBrand.id);
+          if (idx >= 0) {
+            data[idx] = newBrand;
+          } else {
+            data.push(newBrand);
+          }
+          fs.writeFileSync('data/brands.json', JSON.stringify(data, null, 2));
+          EOF
+        env:
+          INPUT_ID: ${{ github.event.inputs.id }}
+          INPUT_NAME: ${{ github.event.inputs.name }}
+          INPUT_LOGOURL: ${{ github.event.inputs.logoUrl }}
+          INPUT_DESCRIPTION: ${{ github.event.inputs.description }}
+
+      - name: Commit and push changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/brands.json
+          git commit -m "Update brands.json via API" || echo "No changes to commit"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
+        env:
+          GITHUB_REF_NAME: ${{ github.ref_name }}
