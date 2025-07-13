@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from "react";
+import Image from "next/image";
 
 interface Brand {
   id: number;
@@ -95,7 +96,7 @@ export default function BrandManager() {
         }
         setBrands((prev) => [...prev, newBrand]);
         resetForm();
-      } catch (err: any) {
+      } catch (err: unknown) {
         setError("Failed to persist brand to GitHub. See console for details.");
         console.error("API error:", err);
       } finally {
@@ -209,7 +210,7 @@ export default function BrandManager() {
               brands.map((brand) => (
                 <tr key={brand.id}>
                   <td className="p-2 border-b">
-                    <img src={brand.logoUrl} alt={brand.name} className="h-8 w-8 object-contain" />
+                    <Image src={brand.logoUrl} alt={brand.name} width={32} height={32} className="h-8 w-8 object-contain" />
                   </td>
                   <td className="p-2 border-b font-semibold">{brand.name}</td>
                   <td className="p-2 border-b">{brand.description}</td>
