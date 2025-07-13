@@ -1,32 +1,56 @@
 "use client";
-import React, { useState } from "react";
+
+import {
+  ChangeEvent,
+  FormEvent,
+  useEffect, 
+  useState 
+} from "react";
+
 import Image from "next/image";
 
 interface Brand {
-  id: number;
-  name: string;
-  logoUrl: string;
-  description: string;
+  id          : number;
+  name        : string;
+  logoUrl     : string;
+  description : string;
+}
+
+async function fetchBrandsJSON(): Promise<Brand[]> {
+  let url: string;
+
+  if (process.env.NEXT_STATIC_OUTPUT === 'true') {
+    url = `https://raw.githubusercontent.com/ab-internal/ab-app-brands/develop/data/brands.json?ts=${Date.now()}`;
+  } else {
+    url = "/api/brands-proxy";
+  }
+
+  const response = await fetch(url, { cache: "no-store" });
+
+  if (!response.ok) throw new Error("Failed to fetch brands.json");
+
+  const data = await response.json();
+
+  if (Array.isArray(data)) return data;
+
+  throw new Error("brands.json is not an array");
 }
 
 export default function BrandManager() {
-  const [loading, setLoading] = React.useState(true);
-  React.useEffect(() => {
-    fetch("https://raw.githubusercontent.com/ab-internal/ab-app-brands/develop/data/brands.json?ts=" + Date.now(), 
-      {
-        cache: "no-store"
-      }
-    ).then((res) => {
-      if (!res.ok) throw new Error("Failed to fetch brands.json");
-      return res.json();
-    }).then((data) => {
-      if (Array.isArray(data)) setBrands(data);
-    }).catch((err) => {
-      console.error("Error loading brands.json:", err);
-    }).finally(() => setLoading(false));
+  const [loading, setLoading] = useState(true);
+  const [brands, setBrands]   = useState<Brand[]>([]);
+
+  useEffect(() => {
+    
+    fetchBrandsJSON()
+      .then(setBrands)
+      .catch((err) => {
+        console.error("Error loading brands.json:", err);
+      })
+      .finally(() => setLoading(false));
+
   }, []);
 
-  const [brands, setBrands] = useState<Brand[]>([]);
   const [form, setForm] = useState<Omit<Brand, "id">>({
     name: "",
     logoUrl: "",
@@ -34,7 +58,7 @@ export default function BrandManager() {
   });
 
   const [editingId, setEditingId] = useState<number | null>(null);
-  const [error, setError] = useState<string>("");
+  const [error, setError]         = useState<string>("");
 
   const resetForm = () => {
     setForm({ name: "", logoUrl: "", description: "" });
@@ -42,7 +66,7 @@ export default function BrandManager() {
     setError("");
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   };
@@ -56,31 +80,38 @@ export default function BrandManager() {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+
     if (!form.name.trim()) {
       setError("Name is required.");
       return;
     }
+
     if (!form.logoUrl.trim() || !validateUrl(form.logoUrl)) {
       setError("Valid Logo URL is required.");
       return;
     }
+
     if (!form.description.trim()) {
       setError("Description is required.");
       return;
     }
+
     if (editingId !== null) {
+
       setBrands((prev) =>
         prev.map((b) => (b.id === editingId ? { ...b, ...form } : b))
       );
       resetForm();
+
     } else {
+
       setLoading(true);
       setError("");
       const newBrand = { ...form, id: Date.now() };
       try {
-        const res = await fetch("/api/brand-dispatch", {
+        const response = await fetch("/api/brand-dispatch", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -90,14 +121,17 @@ export default function BrandManager() {
             name: newBrand.name,
             logoUrl: newBrand.logoUrl,
             description: newBrand.description,
+            operation: "create"
           }),
         });
-        if (!res.ok) {
-          const err = await res.json();
-          throw new Error(`API error: ${res.status} ${JSON.stringify(err)}`);
+
+        if (!response.ok) {
+          const err = await response.json();
+          throw new Error(`API error: ${response.status} ${JSON.stringify(err)}`);
         }
-        setBrands((prev) => [...prev, newBrand]);
+        await fetchBrands();
         resetForm();
+        
       } catch (err: unknown) {
         setError("Failed to persist brand to GitHub. See console for details.");
         console.error("API error:", err);
@@ -116,9 +150,48 @@ export default function BrandManager() {
     }
   };
 
-  const handleDelete = (id: number) => {
-    setBrands((prev) => prev.filter((b) => b.id !== id));
-    if (editingId === id) resetForm();
+  const [deletingIds, setDeletingIds] = useState<number[]>([]);
+
+  const fetchBrands = async () => {
+    setLoading(true);
+
+    try {
+      const brands = await fetchBrandsJSON();
+      setBrands(brands);
+    } catch (err) {
+      console.error("Error loading brands.json:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
+  const handleDelete = async (id: number) => {
+    setDeletingIds((prev) => [...prev, id]);
+    setError("");
+    try {
+
+      const response = await fetch("/api/brand-dispatch", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, operation: "delete" }),
+      });
+
+      if (!response.ok) {
+        const err = await response.json();
+        throw new Error(`API error: ${response.status} ${JSON.stringify(err)}`);
+      }
+
+      await fetchBrands();
+
+      if (editingId === id) resetForm();
+
+    } catch (err) {
+      setError("Failed to delete brand. See console for details.");
+      console.error("API error:", err);
+    } finally {
+      setDeletingIds((prev) => prev.filter((delId) => delId !== id));
+    }
   };
 
   return (
@@ -210,7 +283,7 @@ export default function BrandManager() {
               </tr>
             ) : (
               brands.map((brand) => (
-                <tr key={brand.id}>
+                <tr key={brand.id} className="relative">
                   <td className="p-2 border-b">
                     <Image src={brand.logoUrl} alt={brand.name} width={32} height={32} className="h-8 w-8 object-contain" />
                   </td>
@@ -227,9 +300,16 @@ export default function BrandManager() {
                     <button
                       type="button"
                       onClick={() => handleDelete(brand.id)}
-                      className="bg-red-600 text-white px-2 py-1 rounded hover:bg-red-700"
+                      className="bg-red-600 text-white px-2 py-1 rounded hover:bg-red-700 relative"
+                      disabled={deletingIds.includes(brand.id)}
                     >
-                      Delete
+                      {deletingIds.includes(brand.id) ? (
+                        <span className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-40 z-10">
+                          <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        </span>
+                      ) : (
+                        "Delete"
+                      )}
                     </button>
                   </td>
                 </tr>
