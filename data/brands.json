@@ -4,5 +4,11 @@
     "name": "Buddyweisest",
     "logoUrl": "https://cdn.builder.io/api/v1/image/assets%2F0e651898bba9404faf7390e31f349b0b%2F57a18f25c2044debbdcf049b2edc84a7?format=webp&width=2000",
     "description": "Definitely not Budweiser"
+  },
+  {
+    "id": 9999992,
+    "name": "Bud Lightyear",
+    "logoUrl": "https://www.anheuser-busch.com/content/dam/ab/brand-logos/bud-light.png",
+    "description": "To infinity and refreshing! A light lager for those who boldly go where no beer has gone before."
   }
 ]
