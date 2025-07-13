@@ -9,6 +9,7 @@ interface Brand {
 }
 
 export default function BrandManager() {
+  const [loading, setLoading] = React.useState(true);
   React.useEffect(() => {
     fetch("https://raw.githubusercontent.com/ab-internal/ab-app-brands/refs/heads/develop/data/brands.json")
       .then((res) => {
@@ -20,7 +21,8 @@ export default function BrandManager() {
       })
       .catch((err) => {
         console.error("Error loading brands.json:", err);
-      });
+      })
+      .finally(() => setLoading(false));
   }, []);
   const [brands, setBrands] = useState<Brand[]>([]);
   const [form, setForm] = useState<Omit<Brand, "id">>({
@@ -156,14 +158,20 @@ export default function BrandManager() {
         </div>
       </form>
       {/* Table */}
-      <div className="flex-1 overflow-x-auto">
-        <table className="min-w-full bg-white dark:bg-gray-900 shadow rounded">
+      <div className="flex-1 relative">
+        {/* Spinner overlay */}
+        {loading && (
+          <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-40 z-10">
+            <div className="w-12 h-12 border-4 border-blue-400 border-t-transparent rounded-full animate-spin" />
+          </div>
+        )}
+        <table className="w-full bg-white dark:bg-gray-800 shadow rounded">
           <thead>
-            <tr>
-              <th className="p-2 border-b">Logo</th>
-              <th className="p-2 border-b">Name</th>
-              <th className="p-2 border-b">Description</th>
-              <th className="p-2 border-b">Actions</th>
+            <tr className="bg-gray-100 dark:bg-gray-700">
+              <th className="p-2 text-left">Logo</th>
+              <th className="p-2 text-left">Name</th>
+              <th className="p-2 text-left">Description</th>
+              <th className="p-2 text-left">Actions</th>
             </tr>
           </thead>
           <tbody>
