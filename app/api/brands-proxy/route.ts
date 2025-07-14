@@ -14,8 +14,8 @@ export async function GET() {
 
   const tmpDir      = "/tmp/brands-proxy";
   const repoUrl     = "https://github.com/ab-internal/ab-app-brands.git";
-  const branch      = "develop";
-  const filePath    = "data/brands.json";
+  const branch      = "data";
+  const filePath    = "brands.json";
 
   await fs.rm(tmpDir, { recursive: true, force: true }).catch(() => {});
   await fs.mkdir(tmpDir, { recursive: true });
@@ -35,16 +35,21 @@ export async function GET() {
   });
 
   let brands;
+
   try {
     const brandsRaw = await fs.readFile(path.join(tmpDir, filePath), "utf8");
     brands = JSON.parse(brandsRaw);
+
   } catch (err) {
+
     console.error("Error parsing brands.json from isomorphic-git:", err);
+
     return NextResponse.json({
       error: "brands.json not found or invalid (isomorphic-git)" 
     }, { 
       status: 500 
     });
+    
   }
 
   return new NextResponse(JSON.stringify(brands), {

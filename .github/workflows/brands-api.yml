@@ -29,28 +29,55 @@ on:
           - edit
           - delete
 
+env:
+  DATA_BRANCH: data
+  DATA_FILE: brands.json
 jobs:
   update-brands-json:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - name: Set up Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
+      - name: Fetch data branch or create if missing
+        run: |
+          git fetch origin $DATA_BRANCH || true
 
-      - name: Ensure data directory exists
-        run: mkdir -p data
+          if git ls-remote --exit-code --heads origin $DATA_BRANCH; then
+
+            git checkout $DATA_BRANCH
+            git pull origin $DATA_BRANCH
+
+            echo "- ✅ Data branch '$DATA_BRANCH' found and checked out." >> $GITHUB_STEP_SUMMARY
+          else
+
+            git checkout --orphan $DATA_BRANCH
+
+            git rm -rf .
+            echo '[]' > $DATA_FILE
+            git add $DATA_FILE
+
+            git commit -m "Initialize data branch"
+            git push origin $DATA_BRANCH
+
+            echo "- ✨ Data branch '$DATA_BRANCH' not found. Initialized new orphan branch with $DATA_FILE." >> $GITHUB_STEP_SUMMARY
+          fi
 
       - name: Read existing brands.json or create new
         id: read_json
         run: |
-          if [ -f data/brands.json ]; then
-            cat data/brands.json > brands.json.bak
+          if [ -f brands.json ]; then
+
+            echo "- 📦 $DATA_FILE found, creating backup." >> $GITHUB_STEP_SUMMARY
+            cat brands.json > brands.json.bak
+
           else
-            echo '[]' > brands.json.bak
+
+            echo "- 🆕 $DATA_FILE not found, creating new backup as empty array." >> $GITHUB_STEP_SUMMARY
+            echo '[]' > $DATA_FILE.bak
+            
           fi
 
       - name: Update brands.json
@@ -85,13 +112,13 @@ jobs:
 
                if (index >= 0) {
                  data[index] = newBrand;
-                 console.log('Updated brand with id', id);
+                 require('child_process').execSync(`echo '\n- 📝 Updated brand with id ${id}' >> $GITHUB_STEP_SUMMARY`);
                } else {
                  data.push(newBrand);
-                 console.log('Created brand with id', id);
+                 require('child_process').execSync(`echo '\n- 🆕 Created brand with id ${id}' >> $GITHUB_STEP_SUMMARY`);
                }
 
-               require('fs').writeFileSync('data/brands.json', JSON.stringify(data, null, 2));
+               require('fs').writeFileSync(process.env.DATA_FILE, JSON.stringify(data, null, 2));
 
                break;
 
@@ -105,46 +132,42 @@ jobs:
 
                if (index >= 0) {
                  data[index] = newBrand;
-                 console.log('Updated brand with id', id);
+                 require('child_process').execSync(`echo '\n- 📝 Updated brand with id ${id}' >> $GITHUB_STEP_SUMMARY`);
                } else {
-                 console.error('Brand with id', id, 'not found for edit.');
+                 require('child_process').execSync(`echo '\n- ❌ Brand with id ${id} not found for edit.' >> $GITHUB_STEP_SUMMARY`);
                  process.exit(1);
                }
 
-               require('fs').writeFileSync('data/brands.json', JSON.stringify(data, null, 2));
+               require('fs').writeFileSync(process.env.DATA_FILE, JSON.stringify(data, null, 2));
 
                break;
 
             case 'delete':
 
               if (index === -1) {
-                console.error('Brand with id', id, 'not found.');
+                require('child_process').execSync(`echo '\n- ❌ Brand with id ${id} not found for delete.' >> $GITHUB_STEP_SUMMARY`);
                 process.exit(1);
               }
 
               data.splice(index, 1);
-              console.log('Deleted brand with id', id);
+              require('child_process').execSync(`echo '\n- 🗑️ Deleted brand with id ${id}' >> $GITHUB_STEP_SUMMARY`);
 
-              require('fs').writeFileSync('data/brands.json', JSON.stringify(data, null, 2));
+              require('fs').writeFileSync(process.env.DATA_FILE, JSON.stringify(data, null, 2));
 
               break;
 
             default:
 
-              console.error(`Unsupported or missing operation: '${process.env.INPUT_OPERATION}'.`);
+              require('child_process').execSync(`echo '\n- 🚫 Unsupported or missing operation: ${process.env.INPUT_OPERATION}' >> $GITHUB_STEP_SUMMARY`);
               process.exit(1);
 
           }
 
-          fs.writeFileSync('data/brands.json', JSON.stringify(data, null, 2));
+          fs.writeFileSync(process.env.DATA_FILE, JSON.stringify(data, null, 2));
           EOF
 
       - name: Commit and push changes
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/brands.json
-          git commit -m "Update brands.json via API" || echo "No changes to commit"
-          git push origin "HEAD:${GITHUB_REF_NAME}"
-        env:
-          GITHUB_REF_NAME: ${{ github.ref_name }}
+          git add $DATA_FILE
+          git commit -m "Update $DATA_FILE via API" || echo "No changes to commit"
+          git push origin $DATA_BRANCH
