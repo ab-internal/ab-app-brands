@@ -14,24 +14,24 @@ export function DataTable<T extends Record<string, unknown>>({ items, loading, d
   const keys: (keyof T)[] = items.length > 0 ? Object.keys(items[0]) as (keyof T)[] : [];
 
   return (
-    <div className="flex-1 relative bg-[var(--color-bg)] text-[var(--color-text)]">
+    <div className="flex-1 relative bg-[var(--global-color-bg)] text-[var(--global-color-text)]">
       {/* Spinner overlay */}
       {loading && (
-        <div className="absolute inset-0 flex items-center justify-center bg-[var(--color-bg)] bg-opacity-80 z-10 rounded-2xl">
+        <div className="absolute inset-0 flex items-center justify-center bg-[var(--global-color-bg)] bg-opacity-80 z-10 rounded-2xl">
           <div className="w-12 h-12 border-4 border-yellow-200 border-t-transparent rounded-full animate-spin" />
         </div>
       )}
       {/** Dynamically generate table headings and cells from the first item in items */}
       {/* keys definition moved above return */}
-      <table className="w-full bg-[var(--color-bg)] shadow-lg rounded-2xl overflow-hidden border border-[var(--color-border)]">
+      <table className="w-full bg-[var(--global-color-bg)] shadow-lg rounded-2xl overflow-hidden border border-[var(--global-color-border)]">
         <thead>
-          <tr className="bg-[var(--color-border)]">
+          <tr className="bg-[var(--global-color-border)]">
             {keys.map((key: keyof T) => (
-              <th key={String(key)} className="p-3 text-left font-semibold text-[var(--color-accent)]">
+              <th key={String(key)} className="p-3 text-left font-semibold text-[var(--global-color-accent)]">
                 {String(key).charAt(0).toUpperCase() + String(key).slice(1)}
               </th>
             ))}
-            <th className="p-3 text-left font-semibold text-[var(--color-accent)]">Actions</th>
+            <th className="p-3 text-left font-semibold text-[var(--global-color-accent)]">Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -43,13 +43,13 @@ export function DataTable<T extends Record<string, unknown>>({ items, loading, d
             </tr>
           ) : (
             items.map((item) => (
-              <tr key={getRowId(item)} className="relative hover:bg-[var(--color-border)] transition-colors">
+              <tr key={getRowId(item)} className="relative hover:bg-[var(--global-color-border)] transition-colors">
                 {keys.map(
                   (key: keyof T) => {
-                    let cellClass = "p-3 border-b border-[var(--color-border)] ";
-                    if (key === "name") cellClass += "font-bold text-[var(--color-accent)] ";
-                    else if (key === "description") cellClass += "text-[var(--color-text)] ";
-                    else cellClass += "text-[var(--color-text)] ";
+                    let cellClass = "p-3 border-b border-[var(--global-color-border)] ";
+                    if (key === "name") cellClass += "font-bold text-[var(--global-color-accent)] ";
+                    else if (key === "description") cellClass += "text-[var(--global-color-text)] ";
+                    else cellClass += "text-[var(--global-color-text)] ";
                     let cellContent: React.ReactNode;
                     if (key === "logoUrl") {
                       cellContent = (
@@ -67,10 +67,10 @@ export function DataTable<T extends Record<string, unknown>>({ items, loading, d
                     );
                   }
                 )}
-                <td className="p-3 border-b border-[var(--color-border)] flex gap-3">
+                <td className="p-3 border-b border-[var(--global-color-border)] flex gap-3">
                   <button
                     type="button"
-                    className="px-4 py-2 bg-[var(--color-border)] hover:brightness-90 text-[var(--color-accent)] font-semibold rounded shadow-sm transition-colors"
+                    className="px-4 py-2 bg-[var(--global-color-border)] hover:brightness-90 text-[var(--global-color-accent)] font-semibold rounded shadow-sm transition-colors focus:ring-[var(--global-color-accent)]"
                     onClick={() => onEdit(getRowId(item))}
                     disabled={deletingIds.includes(getRowId(item))}
                   >

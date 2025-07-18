@@ -1,66 +1,6 @@
 @import "tailwindcss";
-
-:root {
-  /* Semantic design tokens using Tailwind palette */
-  --color-bg: theme('colors.yellow.50');      
-  --color-text: theme('colors.amber.900');    
-  --color-accent: theme('colors.amber.500');
-  --color-border: theme('colors.yellow.200');
-  --color-bg-dark: theme('colors.neutral.900');
-  --color-text-dark: theme('colors.yellow.100');
-
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-.theme-financial {
-  --color-bg: #eff6ff; /* blue-50 */
-  --color-text: #1e3a8a; /* blue-900 */
-  --color-accent: #ca8a04; /* yellow-600 */
-  --color-border: #bfdbfe; /* blue-200 */
-}
-.theme-orders {
-  --color-bg: #eef2ff; /* indigo-50 */
-  --color-text: #312e81; /* indigo-900 */
-  --color-accent: #14b8a6; /* teal-500 */
-  --color-border: #c7d2fe; /* indigo-200 */
-}
-.theme-logistics {
-  --color-bg: #f0fdf4; /* green-50 */
-  --color-text: #0f172a; /* slate-900 */
-  --color-accent: #16a34a; /* green-600 */
-  --color-border: #bbf7d0; /* green-200 */
-}
-.theme-product {
-  --color-bg: #fff7ed; /* orange-50 */
-  --color-text: #7c2d12; /* orange-900 */
-  --color-accent: #f59e42; /* amber-500 */
-  --color-border: #fed7aa; /* orange-200 */
-}
-.theme-master-data {
-  --color-bg: #f9fafb; /* gray-50 */
-  --color-text: #164e63; /* cyan-900 */
-  --color-accent: #06b6d4; /* cyan-500 */
-  --color-border: #e5e7eb; /* gray-200 */
-}
-.theme-sales {
-  --color-bg: #faf5ff; /* purple-50 */
-  --color-text: #831843; /* pink-900 */
-  --color-accent: #a78bfa; /* purple-500 */
-  --color-border: #e9d5ff; /* purple-200 */
-}
-.theme-billing {
-  --color-bg: #ecfdf5; /* emerald-50 */
-  --color-text: #18181b; /* zinc-900 */
-  --color-accent: #059669; /* emerald-600 */
-  --color-border: #a7f3d0; /* emerald-200 */
-}
-.theme-marketing {
-  --color-bg: #fef2f2; /* red-50 */
-  --color-text: #713f12; /* yellow-900 */
-  --color-accent: #ef4444; /* red-500 */
-  --color-border: #fecaca; /* red-200 */
-}
+@import "./tokens.css";
+@import "./themes.css";
 
 @media (prefers-color-scheme: dark) {
   :root {

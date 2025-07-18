@@ -20,10 +20,10 @@ const brandApi = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-  ...brand,
-  id: brand.id ?? Date.now().toString(),
-  operation: "create"
-}),
+        ...brand,
+        id: brand.id ?? Date.now().toString(),
+        operation: "create"
+      }),
     });
     if (!res.ok) throw new Error("Failed to create brand");
     return res.json();
@@ -47,7 +47,7 @@ const brandApi = {
   },
 };
 
-export default function BrandManager({ theme }: { theme?: string }) {
+export default function BrandManager({ theme }: { readonly theme?: string }) {
   return (
     <div className={theme ?? ""}>
       <DataManager<Brand>
