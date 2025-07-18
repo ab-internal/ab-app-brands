@@ -7,15 +7,15 @@ import {
   useState
 } from "react";
 
-import DataForm from "./DataForm";
+import { FieldDef, DataForm } from "./DataForm";
 import DataTable from "./DataTable";
+import { Brand } from "./types";
 
-interface Brand {
-  id: number;
-  name: string;
-  logoUrl: string;
-  description: string;
-}
+const brandFieldDefs: FieldDef<Omit<Brand, "id">>[] = [
+  { name: "name", label: "Name", type: "text", required: true },
+  { name: "logoUrl", label: "Logo URL", type: "text", required: true },
+  { name: "description", label: "Description", type: "textarea", required: true },
+];
 
 async function fetchBrandsJSON(): Promise<Brand[]> {
   let url: string;
@@ -157,6 +157,7 @@ export default function BrandManager() {
     <div className="flex flex-col md:flex-row w-full max-w-5xl mx-auto gap-8 items-start justify-center">
       <DataForm
         form={form}
+        fieldDefs={brandFieldDefs}
         editingId={editingId}
         error={error}
         onChange={handleChange}
