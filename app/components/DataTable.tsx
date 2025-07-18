@@ -9,11 +9,11 @@ interface Brand {
 }
 
 interface DataTableProps {
-  brands: Brand[];
-  loading: boolean;
-  deletingIds: number[];
-  onEdit: (id: number) => void;
-  onDelete: (id: number) => void;
+  readonly brands: Brand[];
+  readonly loading: boolean;
+  readonly deletingIds: readonly number[];
+  readonly onEdit: (id: number) => void;
+  readonly onDelete: (id: number) => void;
 }
 
 export default function DataTable({ brands, loading, deletingIds, onEdit, onDelete }: DataTableProps) {

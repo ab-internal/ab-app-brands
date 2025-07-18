@@ -2,16 +2,16 @@
 import React from "react";
 
 interface DataFormProps {
-  form: {
-    name: string;
-    logoUrl: string;
-    description: string;
+  readonly form: {
+    readonly name: string;
+    readonly logoUrl: string;
+    readonly description: string;
   };
-  editingId: number | null;
-  error: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
-  onSubmit: (e: React.FormEvent) => void;
-  onCancel: () => void;
+  readonly editingId: number | null;
+  readonly error: string;
+  readonly onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  readonly onSubmit: (e: React.FormEvent) => void;
+  readonly onCancel: () => void;
 }
 
 export default function DataForm({ form, editingId, error, onChange, onSubmit, onCancel }: DataFormProps) {
