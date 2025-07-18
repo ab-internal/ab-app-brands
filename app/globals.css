@@ -1,25 +1,26 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+  /* Semantic design tokens using Tailwind palette */
+  --color-bg: theme('colors.yellow.50');      /* closest to #fdf6e3 */
+  --color-text: theme('colors.amber.900');    /* closest to #3b2f1e */
+  --color-bg-dark: theme('colors.neutral.900');
+  --color-text-dark: theme('colors.yellow.100');
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --color-bg: var(--color-bg-dark);
+    --color-text: var(--color-text-dark);
   }
 }
 
 body {
-  @apply bg-[#fdf6e3] text-[#3b2f1e] antialiased;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  @apply antialiased;
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
 }

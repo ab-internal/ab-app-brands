@@ -220,11 +220,11 @@ export default function BrandManager() {
     <div className="flex flex-col md:flex-row w-full max-w-5xl mx-auto gap-8 items-start justify-center">
       {/* Form */}
       <form
-        className="flex flex-col gap-5 w-full max-w-xs bg-[#fffbe6] shadow-lg rounded-2xl p-8 border border-[#f5e9c8]"
+        className="flex flex-col gap-5 w-full max-w-xs bg-yellow-50 shadow-lg rounded-2xl p-8 border border-yellow-100"
         onSubmit={handleSubmit}
       >
-        <h2 className="text-2xl font-bold mb-3 text-[#b89c4c] tracking-tight drop-shadow">{editingId ? "Edit Brand" : "Add Brand"}</h2>
-        <label className="flex flex-col gap-1">
+        <h2 className="text-2xl font-bold mb-3 text-yellow-700 tracking-tight drop-shadow">{editingId ? "Edit Brand" : "Add Brand"}</h2>
+        <label className="flex flex-col gap-1 text-gray-900">
           Name
           <input
             name="name"
@@ -232,11 +232,11 @@ export default function BrandManager() {
             value={form.name}
             onChange={handleChange}
             required
-            className="border border-[#e9deb2] bg-[#fff] px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#ffe082] text-base shadow-sm"
+            className="border border-yellow-200 bg-white px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-200 text-base shadow-sm text-gray-900 placeholder-gray-400"
             placeholder="Brand Name"
           />
         </label>
-        <label className="flex flex-col gap-1">
+        <label className="flex flex-col gap-1 text-gray-900">
           Logo URL
           <input
             name="logoUrl"
@@ -245,18 +245,18 @@ export default function BrandManager() {
             onChange={handleChange}
             required
             pattern="https?://.+"
-            className="border border-[#e9deb2] bg-[#fff] px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#ffe082] text-base shadow-sm"
+            className="border border-yellow-200 bg-white px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-200 text-base shadow-sm text-gray-900 placeholder-gray-400"
             placeholder="https://example.com/logo.png"
           />
         </label>
-        <label className="flex flex-col gap-1">
+        <label className="flex flex-col gap-1 text-gray-900">
           Description
           <textarea
             name="description"
             value={form.description}
             onChange={handleChange}
             required
-            className="border border-[#e9deb2] bg-[#fff] px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#ffe082] min-h-[60px] text-base shadow-sm"
+            className="border border-yellow-200 bg-white px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-200 min-h-[60px] text-base shadow-sm text-gray-900 placeholder-gray-400"
             placeholder="Brand Description"
           />
         </label>
@@ -264,7 +264,7 @@ export default function BrandManager() {
         <div className="flex gap-3 mt-4">
           <button
             type="submit"
-            className="bg-[#ffb300] text-white text-lg font-semibold px-8 py-2 rounded-full shadow hover:bg-[#ffd54f] hover:text-[#7c6a3c] transition-colors"
+            className="bg-yellow-500 text-white text-lg font-semibold px-8 py-2 rounded-full shadow hover:bg-yellow-300 hover:text-yellow-900 transition-colors"
           >
             {editingId ? "Update" : "Add"}
           </button>
@@ -272,7 +272,7 @@ export default function BrandManager() {
             <button
               type="button"
               onClick={resetForm}
-              className="bg-[#e9deb2] text-[#7c6a3c] text-lg font-semibold px-8 py-2 rounded-full shadow hover:bg-[#ffe082] hover:text-[#b89c4c] transition-colors"
+              className="bg-yellow-200 text-[#7c6a3c] text-lg font-semibold px-8 py-2 rounded-full shadow hover:bg-yellow-200 hover:text-yellow-700 transition-colors"
             >
               Cancel
             </button>
@@ -283,50 +283,50 @@ export default function BrandManager() {
       <div className="flex-1 relative">
         {/* Spinner overlay */}
         {loading && (
-          <div className="absolute inset-0 flex items-center justify-center bg-[#fdf6e3] bg-opacity-80 z-10 rounded-2xl">
-            <div className="w-12 h-12 border-4 border-[#ffecb3] border-t-transparent rounded-full animate-spin" />
+          <div className="absolute inset-0 flex items-center justify-center bg-yellow-50 bg-opacity-80 z-10 rounded-2xl">
+            <div className="w-12 h-12 border-4 border-yellow-200 border-t-transparent rounded-full animate-spin" />
           </div>
         )}
-        <table className="w-full bg-[#fffbe6] shadow-lg rounded-2xl overflow-hidden border border-[#f5e9c8]">
+        <table className="w-full bg-yellow-50 shadow-lg rounded-2xl overflow-hidden border border-yellow-100">
           <thead>
-            <tr className="bg-[#fff5cc]">
-              <th className="p-3 text-left font-semibold text-[#b89c4c]">Logo</th>
-              <th className="p-3 text-left font-semibold text-[#b89c4c]">Name</th>
-              <th className="p-3 text-left font-semibold text-[#b89c4c]">Description</th>
-              <th className="p-3 text-left font-semibold text-[#b89c4c]">Actions</th>
+            <tr className="bg-yellow-100">
+              <th className="p-3 text-left font-semibold text-yellow-700">Logo</th>
+              <th className="p-3 text-left font-semibold text-yellow-700">Name</th>
+              <th className="p-3 text-left font-semibold text-yellow-700">Description</th>
+              <th className="p-3 text-left font-semibold text-yellow-700">Actions</th>
             </tr>
           </thead>
           <tbody>
             {brands.length === 0 ? (
               <tr>
-                <td colSpan={4} className="text-center p-6 text-[#b89c4c] font-medium">
+                <td colSpan={4} className="text-center p-6 text-yellow-700 font-medium">
                   No brands yet.
                 </td>
               </tr>
             ) : (
               brands.map((brand) => (
-                <tr key={brand.id} className="relative hover:bg-[#fff5cc] transition-colors">
-                  <td className="p-3 border-b border-[#f5e9c8]">
+                <tr key={brand.id} className="relative hover:bg-yellow-100 transition-colors">
+                  <td className="p-3 border-b border-yellow-100">
                     <Image src={brand.logoUrl} alt={brand.name} width={32} height={32} className="h-8 w-8 object-contain rounded" />
                   </td>
-                  <td className="p-3 border-b border-[#f5e9c8] font-bold text-[#7c6a3c]">{brand.name}</td>
-                  <td className="p-3 border-b border-[#f5e9c8] text-[#3b2f1e]">{brand.description}</td>
-                  <td className="p-3 border-b border-[#f5e9c8] flex gap-3">
+                  <td className="p-3 border-b border-yellow-100 font-bold text-[#7c6a3c]">{brand.name}</td>
+                  <td className="p-3 border-b border-yellow-100 text-amber-900">{brand.description}</td>
+                  <td className="p-3 border-b border-yellow-100 flex gap-3">
                     <button
                       type="button"
                       onClick={() => handleEdit(brand.id)}
-                      className="bg-[#ffe082] text-[#7c6a3c] font-semibold px-5 py-1.5 rounded-full shadow hover:bg-[#ffecb3] hover:text-[#b89c4c] transition-colors"
+                      className="bg-[#ffe082] text-[#7c6a3c] font-semibold px-5 py-1.5 rounded-full shadow hover:bg-yellow-200 hover:text-yellow-700 transition-colors"
                     >
                       Edit
                     </button>
                     <button
                       type="button"
                       onClick={() => handleDelete(brand.id)}
-                      className="bg-[#ff7043] text-white font-semibold px-5 py-1.5 rounded-full shadow hover:bg-[#ffab91] relative transition-colors"
+                      className="bg-orange-500 text-white font-semibold px-5 py-1.5 rounded-full shadow hover:bg-orange-200 relative transition-colors"
                       disabled={deletingIds.includes(brand.id)}
                     >
                       {deletingIds.includes(brand.id) ? (
-                        <span className="absolute inset-0 flex items-center justify-center bg-[#fffbe6] bg-opacity-60 z-10 rounded-full">
+                        <span className="absolute inset-0 flex items-center justify-center bg-yellow-50 bg-opacity-60 z-10 rounded-full">
                           <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
                         </span>
                       ) : (
