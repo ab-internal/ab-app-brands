@@ -50,15 +50,19 @@ export function DataTable<T extends Record<string, unknown>>({ items, loading, d
                     if (key === "name") cellClass += "font-bold text-yellow-800 ";
                     else if (key === "description") cellClass += "text-yellow-900 ";
                     else cellClass += "text-yellow-700 ";
+                    let cellContent: React.ReactNode;
+                    if (key === "logoUrl") {
+                      cellContent = (
+                        <Image src={typeof item[key] === "string" ? item[key] : ""} alt={typeof item["name"] === "string" ? item["name"] : ""} width={32} height={32} className="h-8 w-8 object-contain rounded" />
+                      );
+                    } else if (typeof item[key] === "string" || typeof item[key] === "number") {
+                      cellContent = String(item[key]);
+                    } else {
+                      cellContent = "";
+                    }
                     return (
                       <td key={String(key)} className={cellClass}>
-                        {key === "logoUrl" ? (
-                          <Image src={typeof item[key] === "string" ? item[key] as string : ""} alt={typeof item["name"] === "string" ? (item["name"] as string) : ""} width={32} height={32} className="h-8 w-8 object-contain rounded" />
-                        ) : (
-                          typeof item[key] === "string" || typeof item[key] === "number"
-                            ? String(item[key])
-                            : ""
-                        )}
+                        {cellContent}
                       </td>
                     );
                   }

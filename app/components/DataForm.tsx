@@ -1,18 +1,11 @@
 "use client";
 import React from "react";
 
-// Generic field definition for form rendering
-export interface FieldDef<T> {
-  name: keyof T;
-  label: string;
-  type: "text" | "number" | "textarea" | "password" | "email" | "url";
-  placeholder?: string;
-  required?: boolean;
-}
+import { FieldDefinition } from "./DataManager";
 
 interface DataFormProps<T> {
-  readonly form: T;
-  readonly fieldDefs: readonly FieldDef<T>[];
+  readonly form: Partial<T>;
+  readonly fields: readonly FieldDefinition<T>[];
   readonly editingId: number | string | null;
   readonly error: string;
   readonly onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
@@ -20,14 +13,14 @@ interface DataFormProps<T> {
   readonly onCancel: () => void;
 }
 
-export function DataForm<T>({ form, fieldDefs, editingId, error, onChange, onSubmit, onCancel }: DataFormProps<T>) {
+export function DataForm<T>({ form, fields, editingId, error, onChange, onSubmit, onCancel }: DataFormProps<T>) {
   return (
     <form
       className="flex flex-col gap-5 w-full max-w-xs bg-yellow-50 shadow-lg rounded-2xl p-8 border border-yellow-100"
       onSubmit={onSubmit}
     >
       <h2 className="text-2xl font-bold mb-3 text-yellow-700 tracking-tight drop-shadow">{editingId ? "Edit" : "Add"}</h2>
-      {fieldDefs.map((field) => (
+      {fields.map((field) => (
         <label key={String(field.name)} className="flex flex-col gap-1 text-gray-900">
           {field.label}
           {field.type === "textarea" ? (
