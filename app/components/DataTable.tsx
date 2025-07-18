@@ -1,22 +1,18 @@
 "use client";
 import Image from "next/image";
 
-interface Brand {
-  id: number;
-  name: string;
-  logoUrl: string;
-  description: string;
-}
-
-interface DataTableProps {
-  readonly brands: Brand[];
+export interface DataTableProps<T extends Record<string, unknown>> {
+  readonly items: T[];
   readonly loading: boolean;
-  readonly deletingIds: readonly number[];
-  readonly onEdit: (id: number) => void;
-  readonly onDelete: (id: number) => void;
+  readonly deletingIds: readonly React.Key[];
+  readonly onEdit: (id: React.Key) => void;
+  readonly onDelete: (id: React.Key) => void;
+  readonly getRowId: (item: T) => React.Key;
 }
 
-export default function DataTable({ brands, loading, deletingIds, onEdit, onDelete }: DataTableProps) {
+export function DataTable<T extends Record<string, unknown>>({ items, loading, deletingIds, onEdit, onDelete, getRowId }: DataTableProps<T>) {
+  const keys: (keyof T)[] = items.length > 0 ? Object.keys(items[0]) as (keyof T)[] : [];
+
   return (
     <div className="flex-1 relative">
       {/* Spinner overlay */}
@@ -25,45 +21,64 @@ export default function DataTable({ brands, loading, deletingIds, onEdit, onDele
           <div className="w-12 h-12 border-4 border-yellow-200 border-t-transparent rounded-full animate-spin" />
         </div>
       )}
+      {/** Dynamically generate table headings and cells from the first item in items */}
+      {/* keys definition moved above return */}
       <table className="w-full bg-yellow-50 shadow-lg rounded-2xl overflow-hidden border border-yellow-100">
         <thead>
           <tr className="bg-yellow-100">
-            <th className="p-3 text-left font-semibold text-yellow-700">Logo</th>
-            <th className="p-3 text-left font-semibold text-yellow-700">Name</th>
-            <th className="p-3 text-left font-semibold text-yellow-700">Description</th>
+            {keys.map((key: keyof T) => (
+              <th key={String(key)} className="p-3 text-left font-semibold text-yellow-700">
+                {String(key).charAt(0).toUpperCase() + String(key).slice(1)}
+              </th>
+            ))}
             <th className="p-3 text-left font-semibold text-yellow-700">Actions</th>
           </tr>
         </thead>
         <tbody>
-          {brands.length === 0 ? (
+          {items.length === 0 ? (
             <tr>
-              <td colSpan={4} className="text-center p-6 text-yellow-700 font-medium">
-                No brands yet.
+              <td colSpan={keys.length + 1} className="text-center p-6 text-yellow-700 font-medium">
+                No items yet.
               </td>
             </tr>
           ) : (
-            brands.map((brand) => (
-              <tr key={brand.id} className="relative hover:bg-yellow-100 transition-colors">
-                <td className="p-3 border-b border-yellow-100">
-                  <Image src={brand.logoUrl} alt={brand.name} width={32} height={32} className="h-8 w-8 object-contain rounded" />
-                </td>
-                <td className="p-3 border-b border-yellow-100 font-bold text-[#7c6a3c]">{brand.name}</td>
-                <td className="p-3 border-b border-yellow-100 text-amber-900">{brand.description}</td>
+            items.map((item) => (
+              <tr key={getRowId(item)} className="relative hover:bg-yellow-100 transition-colors">
+                {keys.map(
+                  (key: keyof T) => {
+                    let cellClass = "p-3 border-b border-yellow-100 ";
+                    if (key === "name") cellClass += "font-bold text-yellow-800 ";
+                    else if (key === "description") cellClass += "text-yellow-900 ";
+                    else cellClass += "text-yellow-700 ";
+                    return (
+                      <td key={String(key)} className={cellClass}>
+                        {key === "logoUrl" ? (
+                          <Image src={typeof item[key] === "string" ? item[key] as string : ""} alt={typeof item["name"] === "string" ? (item["name"] as string) : ""} width={32} height={32} className="h-8 w-8 object-contain rounded" />
+                        ) : (
+                          typeof item[key] === "string" || typeof item[key] === "number"
+                            ? String(item[key])
+                            : ""
+                        )}
+                      </td>
+                    );
+                  }
+                )}
                 <td className="p-3 border-b border-yellow-100 flex gap-3">
                   <button
                     type="button"
-                    onClick={() => onEdit(brand.id)}
-                    className="bg-[#ffe082] text-[#7c6a3c] font-semibold px-5 py-1.5 rounded-full shadow hover:bg-yellow-200 hover:text-yellow-700 transition-colors"
+                    className="px-4 py-2 bg-yellow-200 hover:bg-yellow-300 text-yellow-800 font-semibold rounded shadow-sm transition-colors"
+                    onClick={() => onEdit(getRowId(item))}
+                    disabled={deletingIds.includes(getRowId(item))}
                   >
                     Edit
                   </button>
                   <button
                     type="button"
-                    onClick={() => onDelete(brand.id)}
-                    className="bg-orange-500 text-white font-semibold px-5 py-1.5 rounded-full shadow hover:bg-orange-200 relative transition-colors"
-                    disabled={deletingIds.includes(brand.id)}
+                    className="px-4 py-2 bg-red-400 hover:bg-red-500 text-white font-semibold rounded shadow-sm transition-colors"
+                    onClick={() => onDelete(getRowId(item))}
+                    disabled={deletingIds.includes(getRowId(item))}
                   >
-                    {deletingIds.includes(brand.id) ? (
+                    {deletingIds.includes(getRowId(item)) ? (
                       <span className="absolute inset-0 flex items-center justify-center bg-yellow-50 bg-opacity-60 z-10 rounded-full">
                         <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
                       </span>

@@ -8,7 +8,7 @@ import {
 } from "react";
 
 import { FieldDef, DataForm } from "./DataForm";
-import DataTable from "./DataTable";
+import { DataTable } from "./DataTable";
 import { Brand } from "./types";
 
 const brandFieldDefs: FieldDef<Omit<Brand, "id">>[] = [
@@ -68,9 +68,12 @@ export default function BrandManager() {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (!form.name.trim()) return setError("Name is required.");
-    if (!form.logoUrl.trim() || !validateUrl(form.logoUrl)) return setError("Valid Logo URL is required.");
-    if (!form.description.trim()) return setError("Description is required.");
+    const name = form.name as string;
+    const logoUrl = form.logoUrl as string;
+    const description = form.description as string;
+    if (!name.trim()) return setError("Name is required.");
+    if (!logoUrl.trim() || !validateUrl(logoUrl)) return setError("Valid Logo URL is required.");
+    if (!description.trim()) return setError("Description is required.");
 
     if (editingId !== null) {
       setLoading(true);
@@ -115,7 +118,7 @@ export default function BrandManager() {
   const handleEdit = (id: number) => {
     const brand = brands.find((b) => b.id === id);
     if (brand) {
-      setForm({ name: brand.name, logoUrl: brand.logoUrl, description: brand.description });
+      setForm({ name: brand.name as string, logoUrl: brand.logoUrl as string, description: brand.description as string });
       setEditingId(id);
       setError("");
     }
@@ -165,11 +168,12 @@ export default function BrandManager() {
         onCancel={resetForm}
       />
       <DataTable
-        brands={brands}
+        items={brands}
         loading={loading}
         deletingIds={deletingIds}
-        onEdit={handleEdit}
-        onDelete={handleDelete}
+        onEdit={handleEdit as (id: React.Key) => void}
+        onDelete={handleDelete as (id: React.Key) => void}
+        getRowId={(brand) => brand.id}
       />
     </div>
   );
