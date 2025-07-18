@@ -22,5 +22,11 @@
     "name": "Stella Adios",
     "logoUrl": "https://cdn.builder.io/api/v1/image/assets%2F0e651898bba9404faf7390e31f349b0b%2F65e6c4770f454a8c88448d1da5e393cd?format=webp&width=2000",
     "description": "Stellaaa!!!"
+  },
+  {
+    "id": 1752802812005,
+    "name": "Bud Lightyear",
+    "logoUrl": "https://cdn.builder.io/api/v1/image/assets%2F0e651898bba9404faf7390e31f349b0b%2Fe99cdee67e2646198f999887f7e4ac7c?format=webp&width=2000",
+    "description": "To infinity and before... hold my beer"
   }
 ]
