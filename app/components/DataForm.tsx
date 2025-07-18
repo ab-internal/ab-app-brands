@@ -16,12 +16,12 @@ interface DataFormProps<T> {
 export function DataForm<T>({ form, fields, editingId, error, onChange, onSubmit, onCancel }: DataFormProps<T>) {
   return (
     <form
-      className="flex flex-col gap-5 w-full max-w-xs bg-yellow-50 shadow-lg rounded-2xl p-8 border border-yellow-100"
+      className="flex flex-col gap-5 w-full max-w-xs bg-[var(--color-bg)] shadow-lg rounded-2xl p-8 border border-[var(--color-border)]"
       onSubmit={onSubmit}
     >
-      <h2 className="text-2xl font-bold mb-3 text-yellow-700 tracking-tight drop-shadow">{editingId ? "Edit" : "Add"}</h2>
+      <h2 className="text-2xl font-bold mb-3 text-[var(--color-accent)] tracking-tight drop-shadow">{editingId ? "Edit" : "Add"}</h2>
       {fields.map((field) => (
-        <label key={String(field.name)} className="flex flex-col gap-1 text-gray-900">
+        <label key={String(field.name)} className="flex flex-col gap-1 text-[var(--color-text)]">
           {field.label}
           {field.type === "textarea" ? (
             <textarea
@@ -30,7 +30,7 @@ export function DataForm<T>({ form, fields, editingId, error, onChange, onSubmit
               onChange={onChange}
               required={field.required}
               placeholder={field.placeholder}
-              className="border border-yellow-200 bg-white px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-200 text-base shadow-sm text-gray-900 placeholder-gray-400"
+              className="border border-[var(--color-border)] bg-white px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)] text-base shadow-sm text-[var(--color-text)] placeholder-gray-400"
             />
           ) : (
             <input
@@ -40,14 +40,14 @@ export function DataForm<T>({ form, fields, editingId, error, onChange, onSubmit
               onChange={onChange}
               required={field.required}
               placeholder={field.placeholder}
-              className="border border-yellow-200 bg-white px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-200 text-base shadow-sm text-gray-900 placeholder-gray-400"
+              className="border border-[var(--color-border)] bg-white px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)] text-base shadow-sm text-[var(--color-text)] placeholder-gray-400"
             />
           )}
         </label>
       ))}
       {error && <div className="text-red-600 font-medium">{error}</div>}
       <div className="flex gap-2 mt-2">
-        <button type="submit" className="bg-yellow-600 hover:bg-yellow-700 text-white font-semibold px-4 py-2 rounded-xl shadow">
+        <button type="submit" className="bg-[var(--color-accent)] hover:brightness-90 text-[var(--color-bg)] font-semibold px-4 py-2 rounded-xl shadow">
           {editingId ? "Save" : "Add"}
         </button>
         <button type="button" onClick={onCancel} className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold px-4 py-2 rounded-xl shadow">

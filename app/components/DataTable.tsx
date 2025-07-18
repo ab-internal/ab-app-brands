@@ -14,24 +14,24 @@ export function DataTable<T extends Record<string, unknown>>({ items, loading, d
   const keys: (keyof T)[] = items.length > 0 ? Object.keys(items[0]) as (keyof T)[] : [];
 
   return (
-    <div className="flex-1 relative">
+    <div className="flex-1 relative bg-[var(--color-bg)] text-[var(--color-text)]">
       {/* Spinner overlay */}
       {loading && (
-        <div className="absolute inset-0 flex items-center justify-center bg-yellow-50 bg-opacity-80 z-10 rounded-2xl">
+        <div className="absolute inset-0 flex items-center justify-center bg-[var(--color-bg)] bg-opacity-80 z-10 rounded-2xl">
           <div className="w-12 h-12 border-4 border-yellow-200 border-t-transparent rounded-full animate-spin" />
         </div>
       )}
       {/** Dynamically generate table headings and cells from the first item in items */}
       {/* keys definition moved above return */}
-      <table className="w-full bg-yellow-50 shadow-lg rounded-2xl overflow-hidden border border-yellow-100">
+      <table className="w-full bg-[var(--color-bg)] shadow-lg rounded-2xl overflow-hidden border border-[var(--color-border)]">
         <thead>
-          <tr className="bg-yellow-100">
+          <tr className="bg-[var(--color-border)]">
             {keys.map((key: keyof T) => (
-              <th key={String(key)} className="p-3 text-left font-semibold text-yellow-700">
+              <th key={String(key)} className="p-3 text-left font-semibold text-[var(--color-accent)]">
                 {String(key).charAt(0).toUpperCase() + String(key).slice(1)}
               </th>
             ))}
-            <th className="p-3 text-left font-semibold text-yellow-700">Actions</th>
+            <th className="p-3 text-left font-semibold text-[var(--color-accent)]">Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -43,13 +43,13 @@ export function DataTable<T extends Record<string, unknown>>({ items, loading, d
             </tr>
           ) : (
             items.map((item) => (
-              <tr key={getRowId(item)} className="relative hover:bg-yellow-100 transition-colors">
+              <tr key={getRowId(item)} className="relative hover:bg-[var(--color-border)] transition-colors">
                 {keys.map(
                   (key: keyof T) => {
-                    let cellClass = "p-3 border-b border-yellow-100 ";
-                    if (key === "name") cellClass += "font-bold text-yellow-800 ";
-                    else if (key === "description") cellClass += "text-yellow-900 ";
-                    else cellClass += "text-yellow-700 ";
+                    let cellClass = "p-3 border-b border-[var(--color-border)] ";
+                    if (key === "name") cellClass += "font-bold text-[var(--color-accent)] ";
+                    else if (key === "description") cellClass += "text-[var(--color-text)] ";
+                    else cellClass += "text-[var(--color-text)] ";
                     let cellContent: React.ReactNode;
                     if (key === "logoUrl") {
                       cellContent = (
@@ -67,10 +67,10 @@ export function DataTable<T extends Record<string, unknown>>({ items, loading, d
                     );
                   }
                 )}
-                <td className="p-3 border-b border-yellow-100 flex gap-3">
+                <td className="p-3 border-b border-[var(--color-border)] flex gap-3">
                   <button
                     type="button"
-                    className="px-4 py-2 bg-yellow-200 hover:bg-yellow-300 text-yellow-800 font-semibold rounded shadow-sm transition-colors"
+                    className="px-4 py-2 bg-[var(--color-border)] hover:brightness-90 text-[var(--color-accent)] font-semibold rounded shadow-sm transition-colors"
                     onClick={() => onEdit(getRowId(item))}
                     disabled={deletingIds.includes(getRowId(item))}
                   >
