@@ -217,51 +217,54 @@ export default function BrandManager() {
   };
 
   return (
-    <div className="flex w-full max-w-5xl mx-auto gap-8">
+    <div className="flex flex-col md:flex-row w-full max-w-5xl mx-auto gap-8 items-start justify-center">
       {/* Form */}
       <form
-        className="flex flex-col gap-4 w-full max-w-xs bg-white dark:bg-gray-800 shadow p-6 rounded"
+        className="flex flex-col gap-5 w-full max-w-xs bg-[#fffbe6] shadow-lg rounded-2xl p-8 border border-[#f5e9c8]"
         onSubmit={handleSubmit}
       >
-        <h2 className="text-lg font-semibold mb-2">{editingId ? "Edit Brand" : "Add Brand"}</h2>
+        <h2 className="text-2xl font-bold mb-3 text-[#b89c4c] tracking-tight drop-shadow">{editingId ? "Edit Brand" : "Add Brand"}</h2>
         <label className="flex flex-col gap-1">
-          Name <input
+          Name
+          <input
             name="name"
             type="text"
             value={form.name}
             onChange={handleChange}
             required
-            className="border px-2 py-1 rounded"
+            className="border border-[#e9deb2] bg-[#fff] px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#ffe082] text-base shadow-sm"
             placeholder="Brand Name"
           />
         </label>
         <label className="flex flex-col gap-1">
-          Logo URL <input
+          Logo URL
+          <input
             name="logoUrl"
             type="url"
             value={form.logoUrl}
             onChange={handleChange}
             required
             pattern="https?://.+"
-            className="border px-2 py-1 rounded"
+            className="border border-[#e9deb2] bg-[#fff] px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#ffe082] text-base shadow-sm"
             placeholder="https://example.com/logo.png"
           />
         </label>
         <label className="flex flex-col gap-1">
-          Description <textarea
+          Description
+          <textarea
             name="description"
             value={form.description}
             onChange={handleChange}
             required
-            className="border px-2 py-1 rounded min-h-[60px]"
+            className="border border-[#e9deb2] bg-[#fff] px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#ffe082] min-h-[60px] text-base shadow-sm"
             placeholder="Brand Description"
           />
         </label>
         {error && <div className="text-red-600 text-sm">{error}</div>}
-        <div className="flex gap-2 mt-2">
+        <div className="flex gap-3 mt-4">
           <button
             type="submit"
-            className="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700"
+            className="bg-[#ffb300] text-white text-lg font-semibold px-8 py-2 rounded-full shadow hover:bg-[#ffd54f] hover:text-[#7c6a3c] transition-colors"
           >
             {editingId ? "Update" : "Add"}
           </button>
@@ -269,7 +272,7 @@ export default function BrandManager() {
             <button
               type="button"
               onClick={resetForm}
-              className="bg-gray-400 text-white px-4 py-1 rounded hover:bg-gray-500"
+              className="bg-[#e9deb2] text-[#7c6a3c] text-lg font-semibold px-8 py-2 rounded-full shadow hover:bg-[#ffe082] hover:text-[#b89c4c] transition-colors"
             >
               Cancel
             </button>
@@ -280,50 +283,50 @@ export default function BrandManager() {
       <div className="flex-1 relative">
         {/* Spinner overlay */}
         {loading && (
-          <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-40 z-10">
-            <div className="w-12 h-12 border-4 border-blue-400 border-t-transparent rounded-full animate-spin" />
+          <div className="absolute inset-0 flex items-center justify-center bg-[#fdf6e3] bg-opacity-80 z-10 rounded-2xl">
+            <div className="w-12 h-12 border-4 border-[#ffecb3] border-t-transparent rounded-full animate-spin" />
           </div>
         )}
-        <table className="w-full bg-white dark:bg-gray-800 shadow rounded">
+        <table className="w-full bg-[#fffbe6] shadow-lg rounded-2xl overflow-hidden border border-[#f5e9c8]">
           <thead>
-            <tr className="bg-gray-100 dark:bg-gray-700">
-              <th className="p-2 text-left">Logo</th>
-              <th className="p-2 text-left">Name</th>
-              <th className="p-2 text-left">Description</th>
-              <th className="p-2 text-left">Actions</th>
+            <tr className="bg-[#fff5cc]">
+              <th className="p-3 text-left font-semibold text-[#b89c4c]">Logo</th>
+              <th className="p-3 text-left font-semibold text-[#b89c4c]">Name</th>
+              <th className="p-3 text-left font-semibold text-[#b89c4c]">Description</th>
+              <th className="p-3 text-left font-semibold text-[#b89c4c]">Actions</th>
             </tr>
           </thead>
           <tbody>
             {brands.length === 0 ? (
               <tr>
-                <td colSpan={4} className="text-center p-4 text-gray-500">
+                <td colSpan={4} className="text-center p-6 text-[#b89c4c] font-medium">
                   No brands yet.
                 </td>
               </tr>
             ) : (
               brands.map((brand) => (
-                <tr key={brand.id} className="relative">
-                  <td className="p-2 border-b">
-                    <Image src={brand.logoUrl} alt={brand.name} width={32} height={32} className="h-8 w-8 object-contain" />
+                <tr key={brand.id} className="relative hover:bg-[#fff5cc] transition-colors">
+                  <td className="p-3 border-b border-[#f5e9c8]">
+                    <Image src={brand.logoUrl} alt={brand.name} width={32} height={32} className="h-8 w-8 object-contain rounded" />
                   </td>
-                  <td className="p-2 border-b font-semibold">{brand.name}</td>
-                  <td className="p-2 border-b">{brand.description}</td>
-                  <td className="p-2 border-b flex gap-2">
+                  <td className="p-3 border-b border-[#f5e9c8] font-bold text-[#7c6a3c]">{brand.name}</td>
+                  <td className="p-3 border-b border-[#f5e9c8] text-[#3b2f1e]">{brand.description}</td>
+                  <td className="p-3 border-b border-[#f5e9c8] flex gap-3">
                     <button
                       type="button"
                       onClick={() => handleEdit(brand.id)}
-                      className="bg-yellow-500 text-white px-2 py-1 rounded hover:bg-yellow-600"
+                      className="bg-[#ffe082] text-[#7c6a3c] font-semibold px-5 py-1.5 rounded-full shadow hover:bg-[#ffecb3] hover:text-[#b89c4c] transition-colors"
                     >
                       Edit
                     </button>
                     <button
                       type="button"
                       onClick={() => handleDelete(brand.id)}
-                      className="bg-red-600 text-white px-2 py-1 rounded hover:bg-red-700 relative"
+                      className="bg-[#ff7043] text-white font-semibold px-5 py-1.5 rounded-full shadow hover:bg-[#ffab91] relative transition-colors"
                       disabled={deletingIds.includes(brand.id)}
                     >
                       {deletingIds.includes(brand.id) ? (
-                        <span className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-40 z-10">
+                        <span className="absolute inset-0 flex items-center justify-center bg-[#fffbe6] bg-opacity-60 z-10 rounded-full">
                           <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
                         </span>
                       ) : (
