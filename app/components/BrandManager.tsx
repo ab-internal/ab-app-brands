@@ -47,14 +47,16 @@ const brandApi = {
   },
 };
 
-export default function BrandManager() {
+export default function BrandManager({ theme }: { theme?: string }) {
   return (
-    <DataManager<Brand>
-      entityName="Brand"
-      fields={brandFieldDefs}
-      api={brandApi}
-      getRowId={(brand) => brand.id}
-      initialForm={() => ({ name: "", logoUrl: "", description: "" })}
-    />
+    <div className={theme ?? ""}>
+      <DataManager<Brand>
+        entityName="Brand"
+        fields={brandFieldDefs}
+        api={brandApi}
+        getRowId={(brand) => brand.id}
+        initialForm={() => ({ name: "", logoUrl: "", description: "" })}
+      />
+    </div>
   );
 }
