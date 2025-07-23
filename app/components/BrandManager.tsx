@@ -1,6 +1,6 @@
 "use client";
 
-import { DataManager, FieldDefinition } from "./DataManager";
+import { DataManager, FieldDefinition } from "@dukeofgaming/ab-ui";
 import { Brand } from "./types";
 
 const brandFieldDefs: FieldDefinition<Brand>[] = [

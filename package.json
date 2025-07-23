@@ -17,7 +17,7 @@
   },
   "devDependencies": {
     "@changesets/cli": "^2.29.5",
-    "@dukeofgaming/ab-ui": "0.0.0-3-npm-package-release-20250712210354",
+    "@dukeofgaming/ab-ui": "0.0.0-93-feature-accept-typescript-contributions-20250723163415",
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
     "@types/estree": "^1.0.8",

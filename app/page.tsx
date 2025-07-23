@@ -1,7 +1,7 @@
 "use client";
 
 import BrandManager from "./components/BrandManager";
-import { ThemeSwitcher } from "./components/ThemeSwitcher";
+import { ThemeSwitcher } from "@dukeofgaming/ab-ui";
 import { useState } from "react";
 
 export default function Home() {
@@ -21,6 +21,7 @@ export default function Home() {
         <span className="text-xs text-[var(--color-accent)]">v{process.env.NEXT_PUBLIC_APP_VERSION}</span>
       </footer>
     </div>
+    
   );
 }
 

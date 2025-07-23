@@ -1,6 +1,9 @@
 @import "tailwindcss";
-@import "./tokens.css";
-@import "./themes.css";
+
+@import "@dukeofgaming/ab-ui/css/tokens";
+@import "@dukeofgaming/ab-ui/css/themes";
+
+@source "../node_modules/@dukeofgaming/ab-ui";
 
 @media (prefers-color-scheme: dark) {
   :root {
